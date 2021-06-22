@@ -1,13 +1,23 @@
 const Post = require("../../models/post");
+const mongoose = require('mongoose');
+
+const { isValidObjectId } = mongoose;
 
 module.exports = {
+    checkObjectId : async (req, res, next) => {
+        const {id} = req.params;
+        if(!isValidObjectId(id)) {
+            return res.status(400).end(); // Bad Request
+        }
+        next();
+    },
     write: async (req, res ) => {
         const {title, body, tags } = req.body;
         const post = new Post({
             title,
             body,
             tags,
-        })
+        });
         try {
             await post.save();
             return res
